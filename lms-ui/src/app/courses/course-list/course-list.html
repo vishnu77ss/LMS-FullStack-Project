@@ -1,0 +1,98 @@
+<h2 class="mb-3">Courses</h2>
+
+<!-- 🔍 Search box -->
+<div class="mb-3">
+  <input
+    type="text"
+    class="form-control"
+    placeholder="Search by title or description..."
+    [(ngModel)]="searchText"
+  />
+</div>
+
+<app-course-form (courseAdded)="loadCourses()"></app-course-form>
+
+<table class="table table-bordered table-striped mt-3">
+  <thead class="table-dark">
+    <tr>
+      <th>ID</th>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Duration (Hours)</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <!-- 🔍 Use filteredCourses here -->
+    <tr *ngFor="let c of filteredCourses">
+      <td>{{ c.id }}</td>
+
+      <!-- TITLE -->
+      <td>
+        <span *ngIf="editingCourse?.id !== c.id">
+          {{ c.title }}
+        </span>
+        <input
+          *ngIf="editingCourse?.id === c.id"
+          class="form-control"
+          [(ngModel)]="editingCourse!.title"
+        />
+      </td>
+
+      <!-- DESCRIPTION -->
+      <td>
+        <span *ngIf="editingCourse?.id !== c.id">
+          {{ c.description }}
+        </span>
+        <input
+          *ngIf="editingCourse?.id === c.id"
+          class="form-control"
+          [(ngModel)]="editingCourse!.description"
+        />
+      </td>
+
+      <!-- DURATION -->
+      <td>
+        <span *ngIf="editingCourse?.id !== c.id">
+          {{ c.durationInHours }}
+        </span>
+        <input
+          *ngIf="editingCourse?.id === c.id"
+          type="number"
+          class="form-control"
+          [(ngModel)]="editingCourse!.durationInHours"
+        />
+      </td>
+
+      <!-- ACTIONS -->
+      <td>
+        <button
+          *ngIf="editingCourse?.id !== c.id"
+          class="btn btn-sm btn-warning me-2"
+          (click)="startEdit(c)"
+        >
+          Edit
+        </button>
+
+        <button
+          *ngIf="editingCourse?.id === c.id"
+          class="btn btn-sm btn-success me-2"
+          (click)="updateCourse()"
+        >
+          Save
+        </button>
+
+        <button
+          *ngIf="editingCourse?.id === c.id"
+          class="btn btn-sm btn-secondary me-2"
+          (click)="cancelEdit()"
+        >
+          Cancel
+        </button>
+
+        <button class="btn btn-sm btn-danger" (click)="deleteCourse(c.id!)">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
