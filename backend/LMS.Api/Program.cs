@@ -20,6 +20,17 @@ builder.Services.AddDbContext<AppDbContext>(options =>
                   .AllowAnyMethod();
         });
 });
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        });
+});
+
 
 
 
