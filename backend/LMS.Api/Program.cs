@@ -3,50 +3,40 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
+// Controllers
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Database
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-    builder.Services.AddCors(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection")
+    )
+);
+
+// CORS – allow frontend (Netlify / any)
+builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAngular",
+    options.AddPolicy("AllowAll",
         policy =>
         {
-            policy.WithOrigins("http://localhost:4200")
+            policy.AllowAnyOrigin()
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
 });
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowFrontend",
-        policy =>
-        {
-            policy.AllowAnyOrigin()
-                  .AllowAnyMethod()
-                  .AllowAnyHeader();
-        });
-});
-
-
-
 
 var app = builder.Build();
-app.UseCors("AllowAngular");
 
+// Enable CORS
+app.UseCors("AllowAll");
 
-// Configure the HTTP request pipeline
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// Swagger – ENABLE ALWAYS (important)
+app.UseSwagger();
+app.UseSwaggerUI();
 
-app.UseHttpsRedirection();
-
+// No HTTPS redirection (Render handles it)
 app.UseAuthorization();
 
 app.MapControllers();
